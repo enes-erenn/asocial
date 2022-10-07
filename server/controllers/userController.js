@@ -103,3 +103,30 @@ module.exports.login = async (req, res, next) => {
     });
   }
 };
+
+module.exports.avatar = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const image = req.body.image;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        avatarImageURL: image,
+      },
+      { returnOriginal: false }
+    );
+
+    return res.json({
+      status: "success",
+      message: "User avatar updated successfully",
+      user,
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({
+      message: "Something went wrong...",
+      error: err.message,
+      status: "fail",
+    });
+  }
+};

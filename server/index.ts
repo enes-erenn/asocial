@@ -9,7 +9,7 @@ dotenv.config({ path: ".env.local" });
 
 app.use(cors());
 app.use(express.json());
-app.use("/api/auth", userRoutes);
+app.use("/api", userRoutes);
 
 mongoose
   .connect(process.env.DB_URL, {

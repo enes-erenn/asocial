@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -103,21 +103,17 @@ const Button = styled.button`
 `;
 
 interface User {
-  username: String;
-  email: String;
+  usernameOrEmail: String;
   password: String;
-  passwordConfirm: String;
 }
 
-const RegisterPage: React.FC = () => {
+const LoginPage: React.FC = () => {
   const { message, status, showAlert } = useAlert();
   const router = useRouter();
 
   const [user, setUser] = useState<User>({
-    username: "",
-    email: "",
+    usernameOrEmail: "",
     password: "",
-    passwordConfirm: "",
   });
 
   // Setting the State
@@ -132,42 +128,16 @@ const RegisterPage: React.FC = () => {
 
   // Form Validation
   const handleValidate = () => {
-    const { username, email, password, passwordConfirm } = user;
-    if (!username.trim()) {
-      setAlert("Please enter a username.", "fail");
-      return false;
-    }
-    if (username.trim().length < 3) {
-      setAlert("Please choose a longer username.", "fail");
-      return false;
-    }
-    if (!email.trim()) {
-      setAlert("Please enter an email.", "fail");
-      return false;
-    }
-    if (!email.includes("@") || email.trim().length < 5) {
-      setAlert("Please enter a valid email.", "fail");
+    const { usernameOrEmail, password } = user;
+    if (!usernameOrEmail.trim()) {
+      setAlert("Please enter a username or email.", "fail");
       return false;
     }
     if (!password) {
       setAlert("Please enter a password.", "fail");
       return false;
     }
-    if (password.length < 8) {
-      setAlert(
-        "Your password is not secure enough, please try to enter a longer password.",
-        "fail"
-      );
-      return false;
-    }
-    if (!passwordConfirm) {
-      setAlert("Please confirm your password.", "fail");
-      return false;
-    }
-    if (password !== passwordConfirm) {
-      setAlert("Passwords does not match!", "fail");
-      return false;
-    }
+
     return true;
   };
 
@@ -176,22 +146,22 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
 
     if (handleValidate()) {
-      const { username, email, password } = user;
+      const { usernameOrEmail, password } = user;
       try {
         const { data } = await axios.post(
-          "http://localhost:5000/api/auth/register",
+          "http://localhost:5000/api/auth/login",
           {
-            username,
-            email,
+            usernameOrEmail,
             password,
           }
         );
 
-        if (!data.status) {
-          setAlert("Something went wrong. Please try again.", "fail");
+        if (!data.status || data.status === "fail") {
+          if (data.message) {
+            setAlert(data.message, data.status);
+          }
         } else {
           localStorage.setItem("user", JSON.stringify(data.user));
-          router.push("/app");
         }
       } catch (err) {
         console.log(err);
@@ -199,15 +169,21 @@ const RegisterPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      router.push("/app");
+    }
+  }, []);
+
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
         <Header>
-          <Title>Register</Title>
+          <Title>Login</Title>
           <p>
-            Have an account?{" "}
-            <Link href="/login">
-              <LinkTitle>Login</LinkTitle>
+            Don't have an account?{" "}
+            <Link href="/register">
+              <LinkTitle>Register</LinkTitle>
             </Link>
           </p>
         </Header>
@@ -215,19 +191,12 @@ const RegisterPage: React.FC = () => {
           <ListItem>
             <Input
               type="text"
-              placeholder="Username"
-              name="username"
+              placeholder="Username or Email"
+              name="usernameOrEmail"
               onChange={handleChange}
             />
           </ListItem>
-          <ListItem>
-            <Input
-              type="email"
-              placeholder="Email"
-              name="email"
-              onChange={handleChange}
-            />
-          </ListItem>
+
           <ListItem>
             <Input
               type="password"
@@ -236,20 +205,12 @@ const RegisterPage: React.FC = () => {
               onChange={handleChange}
             />
           </ListItem>
-          <ListItem>
-            <Input
-              type="password"
-              placeholder="Password Confirm"
-              name="passwordConfirm"
-              onChange={handleChange}
-            />
-          </ListItem>
         </List>
-        <Button onClick={handleSubmit}>Register</Button>
+        <Button onClick={handleSubmit}>Login</Button>
       </Form>
       <Alert message={message} status={status} />
     </Container>
   );
 };
 
-export default RegisterPage;
+export default LoginPage;

@@ -102,7 +102,7 @@ const Contacts: React.FC<Props> = ({
   return (
     <Container>
       <ContactsLayout>
-        <Logo>asocial</Logo>
+        <Logo>ASOCIAL</Logo>
         {contacts.length > 0 &&
           contacts?.map((contact: any, i) => (
             <ContactWrapper

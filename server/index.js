@@ -10,9 +10,9 @@ dotenv.config({ path: ".env.local" });
 
 app.use(
   cors({
-    origin: true,
     optionsSuccessStatus: 200,
     credentials: true,
+    origin: `https://asocial-chat-app.herokuapp.com/`,
     exposedHeaders: "*",
   })
 );

@@ -72,7 +72,7 @@ const AppPage: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      socket.current = io("https://asocial-chat-app.herokuapp.com/");
+      socket.current = io("https://asocial-chat-app.herokuapp.com");
       socket.current.emit("add-user", user._id);
     }
   }, [user]);

@@ -35,6 +35,9 @@ const ContactsLayout = styled.div`
   align-items: flex-start;
   flex-direction: column;
   gap: 10px;
+  margin: 0 auto;
+  overflow: auto;
+  width: 100%;
 `;
 
 const Logout = styled.button`
@@ -81,7 +84,6 @@ const Contacts: React.FC<Props> = ({
 
     &:hover {
       background-color: rgb(255, 255, 255, 0.5);
-      transform: scale(1.02);
     }
   `;
 

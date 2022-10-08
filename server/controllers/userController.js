@@ -92,6 +92,7 @@ module.exports.login = async (req, res, next) => {
         username: user.username,
         email: user.email,
         _id: user._id,
+        avatarImageURL: user.avatarImageURL,
       },
     });
   } catch (err) {

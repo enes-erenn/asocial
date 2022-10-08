@@ -1,18 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import styled from "styled-components";
 import useGetChat from "../../hooks/useGetChat";
 import { v4 as uuidv4 } from "uuid";
+import { io } from "socket.io-client";
 
 const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 83% 6%;
   gap: 0.3rem;
   overflow: hidden;
-  @media screen and (min-width: 720px) and (max-width: 1080px) {
-    grid-template-rows: 15% 70% 15%;
-  }
 `;
 
 const CurrentChatInfos = styled.div`
@@ -72,6 +70,7 @@ const SendButton = styled.button`
 `;
 
 interface Props {
+  socket: any;
   currentChat: {
     avatarImageURL: string;
     username: string;
@@ -79,6 +78,7 @@ interface Props {
   };
   user: {
     _id: string;
+    avatarImageURL: string;
   };
 }
 
@@ -87,21 +87,61 @@ interface Chat {
   fromSelf?: boolean;
 }
 
-const Chat: React.FC<Props> = ({ currentChat, user }) => {
+interface ArrivalMessage {
+  fromSelf: boolean;
+  message: string;
+}
+
+const Chat: React.FC<Props> = ({ currentChat, user, socket }) => {
   const [message, setMessage] = useState<string>("");
   const { chat } = useGetChat(user._id, currentChat._id);
+  const [messages, setMessages] = useState<any>([]);
+  const [arrivalMessage, setArrivalMessage] = useState<ArrivalMessage>({
+    fromSelf: false,
+    message: "",
+  });
+  const scrollRef = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (user._id && currentChat._id) {
+      (async function () {
+        await axios
+          .post(`http://localhost:5000/api/chat/get`, {
+            from: user._id,
+            to: currentChat._id,
+          })
+          .then((res) => setMessages(res.data.chat));
+      })();
+    }
+  }, [user._id, currentChat._id]);
 
   const handleSendMessage = async (): Promise<void> => {
     if (message.length) {
-      await axios
-        .post("http://localhost:5000/api/chat/add", {
-          from: user._id,
-          to: currentChat._id,
-          message,
-        })
-        .then((res) => setMessage(""));
+      socket.current.emit("send-message", {
+        to: currentChat._id,
+        from: user._id,
+        message,
+      });
+
+      await axios.post("http://localhost:5000/api/chat/add", {
+        from: user._id,
+        to: currentChat._id,
+        message,
+      });
+
+      const msgs: any = [...messages];
+      msgs.push({ fromSelf: true, message });
+      setMessages(msgs);
     }
   };
+
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on("message-recieve", (message: any) => {
+        setArrivalMessage({ fromSelf: false, message });
+      });
+    }
+  }, [socket]);
 
   const Content = styled.span<{ chat: any }>`
     max-width: 40%;
@@ -119,8 +159,17 @@ const Chat: React.FC<Props> = ({ currentChat, user }) => {
   const Message = styled.div<{ chat: any }>`
     display: flex;
     align-items: center;
+    gap: 6px;
     justify-content: ${(p) => (p.chat.fromSelf ? "flex-end" : "flex-start")};
   `;
+
+  useEffect(() => {
+    arrivalMessage && setMessages((prev: any) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <Container>
@@ -134,14 +183,28 @@ const Chat: React.FC<Props> = ({ currentChat, user }) => {
         <CurrentChatUsername>{currentChat.username}</CurrentChatUsername>
       </CurrentChatInfos>
       <Messages>
-        {chat?.map((m: any) => (
-          <div key={uuidv4()}>
+        {messages?.map((m: any) => (
+          <div ref={scrollRef} key={uuidv4()}>
             <Message chat={m}>
+              {!m.fromSelf && (
+                <Image
+                  width="50px"
+                  height="50px"
+                  alt="Avatar"
+                  src={`data:image/svg+xml;base64,${currentChat.avatarImageURL}`}
+                />
+              )}
               <Content chat={m}>
-                <span>
-                  {m.message} {m.fromSelf}
-                </span>
+                <span>{m.message}</span>
               </Content>
+              {m.fromSelf && (
+                <Image
+                  width="50px"
+                  height="50px"
+                  alt="Avatar"
+                  src={`data:image/svg+xml;base64,${user.avatarImageURL}`}
+                />
+              )}
             </Message>
           </div>
         ))}

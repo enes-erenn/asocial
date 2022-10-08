@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { io } from "socket.io-client";
 import useGetContacts from "../../hooks/useGetContacts";
 import Loader from "../Loader";
 import Chat from "./Chat";
@@ -29,6 +30,7 @@ const Wrapper = styled.div`
 interface CurrentUser {
   _id: string;
   username: string;
+  avatarImageURL: string;
 }
 
 interface CurrentChat {
@@ -39,8 +41,13 @@ interface CurrentChat {
 
 const AppPage: React.FC = () => {
   const router = useRouter();
+  const socket: any = useRef();
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
-  const [user, setUser] = useState<CurrentUser>({ _id: "", username: "" });
+  const [user, setUser] = useState<CurrentUser>({
+    _id: "",
+    username: "",
+    avatarImageURL: "",
+  });
   const { contacts } = useGetContacts(user._id || "");
   const [currentChat, setCurrentChat] = useState<CurrentChat>({
     _id: "",
@@ -63,6 +70,13 @@ const AppPage: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      socket.current = io("http://localhost:5000");
+      socket.current.emit("add-user", user._id);
+    }
+  }, [user]);
+
   return (
     <Container>
       {isUserAuthenticated ? (
@@ -74,7 +88,7 @@ const AppPage: React.FC = () => {
             currentChat={currentChat}
           />
           {currentChat._id ? (
-            <Chat currentChat={currentChat} user={user} />
+            <Chat currentChat={currentChat} user={user} socket={socket} />
           ) : (
             <Greetings user={user} />
           )}

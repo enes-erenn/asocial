@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const userRoutes = require("./routes/userRoutes.ts");
+const userRoutes = require("./routes/userRoutes.js");
+const chatRoutes = require("./routes/chatRoutes.js");
 
 const app = express();
 dotenv.config({ path: ".env.local" });
@@ -10,6 +11,7 @@ dotenv.config({ path: ".env.local" });
 app.use(cors());
 app.use(express.json());
 app.use("/api", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 mongoose
   .connect(process.env.DB_URL, {

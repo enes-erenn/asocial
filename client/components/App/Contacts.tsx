@@ -10,8 +10,8 @@ const Container = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  border-radius: 1rem;
-  padding: 1rem;
+  border-radius: 1rem 0 0 1rem;
+  padding: 1rem 1rem 0 1rem;
   gap: 10px;
   background-color: #03071e;
 `;
@@ -42,8 +42,12 @@ const Logout = styled.button`
   height: 2rem;
   background: transparent;
   color: white;
-  border: 1px solid white;
+  border: none;
+  border-top: 1px solid white;
+  border-right: 1px solid white;
+  border-left: 1px solid white;
   cursor: pointer;
+  border-radius: 1rem 1rem 0 0;
 `;
 
 interface Props {

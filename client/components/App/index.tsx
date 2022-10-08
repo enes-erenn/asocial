@@ -74,7 +74,7 @@ const AppPage: React.FC = () => {
             currentChat={currentChat}
           />
           {currentChat._id ? (
-            <Chat currentChat={currentChat} />
+            <Chat currentChat={currentChat} user={user} />
           ) : (
             <Greetings user={user} />
           )}

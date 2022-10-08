@@ -12,7 +12,6 @@ app.use(
   cors({
     optionsSuccessStatus: 200,
     credentials: true,
-    origin: `https://asocial-chat-app.herokuapp.com/`,
     exposedHeaders: "*",
   })
 );
@@ -35,7 +34,7 @@ const server = app.listen(process.env.PORT || 5000, () => {
 
 const io = socket(server, {
   cors: {
-    origin: "https://asocial.vercel.app/",
+    origin: "https://asocial-chat-app.herokuapp.com",
     credantials: true,
   },
 });

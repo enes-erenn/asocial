@@ -59,7 +59,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Loader = () => {
+const Loader: React.FC = () => {
   return (
     <Wrapper>
       <div className="lds-ellipsis">

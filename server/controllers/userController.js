@@ -39,7 +39,7 @@ module.exports.register = async (req, res, next) => {
       user: {
         username: user.username,
         email: user.email,
-        id: user._id,
+        _id: user._id,
       },
     });
   } catch (err) {
@@ -91,7 +91,7 @@ module.exports.login = async (req, res, next) => {
       user: {
         username: user.username,
         email: user.email,
-        id: user._id,
+        _id: user._id,
       },
     });
   } catch (err) {

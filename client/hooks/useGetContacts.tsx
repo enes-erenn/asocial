@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 
 const useGetContacts = (id: string) => {
   const [contacts, setContacts] = useState<Object[]>([]);
-  console.log("contacts", contacts);
-  console.log("id", id);
 
   useEffect(() => {
     if (id) {

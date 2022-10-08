@@ -1,10 +1,11 @@
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import { useRouter } from "next/router";
 import useGetContacts from "../../hooks/useGetContacts";
 import Loader from "../Loader";
+import Chat from "./Chat";
 import Contacts from "./Contacts";
 import Greetings from "./Greetings";
+import styled from "styled-components";
 
 const Container = styled.div`
   width: 100%;
@@ -26,15 +27,26 @@ const Wrapper = styled.div`
 `;
 
 interface CurrentUser {
-  _id?: string;
+  _id: string;
   username: string;
 }
 
-const AppPage = () => {
+interface CurrentChat {
+  _id: string;
+  avatarImageURL: string;
+  username: string;
+}
+
+const AppPage: React.FC = () => {
   const router = useRouter();
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const [user, setUser] = useState<CurrentUser>({ _id: "", username: "" });
   const { contacts } = useGetContacts(user._id || "");
+  const [currentChat, setCurrentChat] = useState<CurrentChat>({
+    _id: "",
+    avatarImageURL: "",
+    username: "",
+  });
 
   // Checking the if user there is
   useEffect(() => {
@@ -55,8 +67,17 @@ const AppPage = () => {
     <Container>
       {isUserAuthenticated ? (
         <Wrapper>
-          <Contacts contacts={contacts} user={user} />
-          <Greetings user={user} />
+          <Contacts
+            contacts={contacts}
+            user={user}
+            setCurrentChat={(chat: any) => setCurrentChat(chat)}
+            currentChat={currentChat}
+          />
+          {currentChat._id ? (
+            <Chat currentChat={currentChat} />
+          ) : (
+            <Greetings user={user} />
+          )}
         </Wrapper>
       ) : (
         <Loader />

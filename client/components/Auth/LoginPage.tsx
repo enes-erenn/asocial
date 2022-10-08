@@ -162,6 +162,7 @@ const LoginPage: React.FC = () => {
           }
         } else {
           localStorage.setItem("user", JSON.stringify(data.user));
+          router.push("/app");
         }
       } catch (err) {
         console.log(err);

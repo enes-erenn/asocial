@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import styled from "styled-components";
 
@@ -6,8 +7,9 @@ const Container = styled.div`
   display: flex;
   align-items: flex-start;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   width: 100%;
+  height: 100%;
   border-radius: 1rem;
   padding: 1rem;
   gap: 10px;
@@ -25,15 +27,38 @@ const Logo = styled.h1`
 const Title = styled.h3`
   width: 100%;
   color: white;
+  margin: 10px 0;
+`;
+
+const ContactsLayout = styled.div`
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const Logout = styled.button`
+  width: 100%;
+  height: 2rem;
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+  cursor: pointer;
 `;
 
 interface Props {
   contacts: Array<Object>;
   user: object;
+  currentChat: object;
+  setCurrentChat: any;
 }
 
-const Contacts: React.FC<Props> = ({ contacts, user }) => {
-  const [currentChat, setCurrentChat] = useState<object>({ _id: "" });
+const Contacts: React.FC<Props> = ({
+  contacts,
+  currentChat,
+  setCurrentChat,
+}) => {
+  const router = useRouter();
 
   const ContactWrapper = styled.div<{ currentChat: any; contact: any }>`
     display: flex;
@@ -60,26 +85,34 @@ const Contacts: React.FC<Props> = ({ contacts, user }) => {
     setCurrentChat(contact);
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    router.push("/login");
+  };
+
   return (
     <Container>
-      <Logo>asocial</Logo>
-      {contacts.length > 0 &&
-        contacts?.map((contact: any, i) => (
-          <ContactWrapper
-            key={i}
-            onClick={() => changeCurrentChat(contact)}
-            contact={contact}
-            currentChat={currentChat}
-          >
-            <Image
-              src={`data:image/svg+xml;base64,${contact.avatarImageURL}`}
-              alt="Avatar"
-              width="64px"
-              height="64px"
-            />
-            <Title>{contact.username}</Title>
-          </ContactWrapper>
-        ))}
+      <ContactsLayout>
+        <Logo>asocial</Logo>
+        {contacts.length > 0 &&
+          contacts?.map((contact: any, i) => (
+            <ContactWrapper
+              key={i}
+              onClick={() => changeCurrentChat(contact)}
+              contact={contact}
+              currentChat={currentChat}
+            >
+              <Image
+                src={`data:image/svg+xml;base64,${contact.avatarImageURL}`}
+                alt="Avatar"
+                width="64px"
+                height="64px"
+              />
+              <Title>{contact.username}</Title>
+            </ContactWrapper>
+          ))}
+      </ContactsLayout>
+      <Logout onClick={handleLogout}>Logout</Logout>
     </Container>
   );
 };

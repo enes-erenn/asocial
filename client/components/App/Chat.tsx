@@ -2,9 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import styled from "styled-components";
-import useGetChat from "../../hooks/useGetChat";
 import { v4 as uuidv4 } from "uuid";
-import { io } from "socket.io-client";
 
 const Container = styled.div`
   display: grid;

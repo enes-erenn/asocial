@@ -8,7 +8,14 @@ const app = express();
 const socket = require("socket.io");
 dotenv.config({ path: ".env.local" });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    optionsSuccessStatus: 200,
+    credentials: true,
+    exposedHeaders: "*",
+  })
+);
 app.use(express.json());
 app.use("/api", userRoutes);
 app.use("/api/chat", chatRoutes);

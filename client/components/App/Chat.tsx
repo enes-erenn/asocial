@@ -92,10 +92,14 @@ interface ArrivalMessage {
   message: string;
 }
 
+interface Message {
+  message: string;
+  fromSelf: boolean;
+}
+
 const Chat: React.FC<Props> = ({ currentChat, user, socket }) => {
   const [message, setMessage] = useState<string>("");
-  const { chat } = useGetChat(user._id, currentChat._id);
-  const [messages, setMessages] = useState<any>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [arrivalMessage, setArrivalMessage] = useState<ArrivalMessage>({
     fromSelf: false,
     message: "",
@@ -123,40 +127,43 @@ const Chat: React.FC<Props> = ({ currentChat, user, socket }) => {
         message,
       });
 
-      await axios.post("http://localhost:5000/api/chat/add", {
-        from: user._id,
-        to: currentChat._id,
-        message,
-      });
-
-      const msgs: any = [...messages];
+      const msgs: Message[] = [...messages];
       msgs.push({ fromSelf: true, message });
       setMessages(msgs);
+
+      await axios
+        .post("http://localhost:5000/api/chat/add", {
+          from: user._id,
+          to: currentChat._id,
+          message,
+        })
+        .then(() => setMessage(""));
     }
   };
 
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("message-recieve", (message: any) => {
+      socket.current.on("message-recieve", (message: string) => {
         setArrivalMessage({ fromSelf: false, message });
       });
     }
   }, [socket]);
 
-  const Content = styled.span<{ chat: any }>`
+  const Content = styled.span<{ chat: Message }>`
     max-width: 40%;
     overflow-wrap: break-word;
     padding: 1rem;
     font-size: 1.1rem;
-    border-radius: 1rem;
-    color: #d1d1d1;
-    background-color: ${(p) => (p.chat.fromSelf ? "#4f04ff21" : "#4f04ff21")};
+    border-radius: ${(p) =>
+      p.chat.fromSelf ? "12px 0 12px 0" : "0 12px 0 12px"};
+    color: white;
+    background-color: ${(p) => (p.chat.fromSelf ? "#22333b" : "#778da9")};
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       max-width: 70%;
     }
   `;
 
-  const Message = styled.div<{ chat: any }>`
+  const Message = styled.div<{ chat: Message }>`
     display: flex;
     align-items: center;
     gap: 6px;
@@ -183,7 +190,7 @@ const Chat: React.FC<Props> = ({ currentChat, user, socket }) => {
         <CurrentChatUsername>{currentChat.username}</CurrentChatUsername>
       </CurrentChatInfos>
       <Messages>
-        {messages?.map((m: any) => (
+        {messages?.map((m: Message) => (
           <div ref={scrollRef} key={uuidv4()}>
             <Message chat={m}>
               {!m.fromSelf && (

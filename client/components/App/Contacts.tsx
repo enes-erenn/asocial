@@ -57,7 +57,7 @@ interface Props {
   contacts: Array<Object>;
   user: object;
   currentChat: object;
-  setCurrentChat: any;
+  setCurrentChat: React.SetStateAction<any>;
 }
 
 const Contacts: React.FC<Props> = ({
@@ -67,7 +67,10 @@ const Contacts: React.FC<Props> = ({
 }) => {
   const router = useRouter();
 
-  const ContactWrapper = styled.div<{ currentChat: any; contact: any }>`
+  const ContactWrapper = styled.div<{
+    currentChat: any;
+    contact: any;
+  }>`
     display: flex;
     align-items: center;
     justify-content: flex-start;

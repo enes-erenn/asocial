@@ -108,7 +108,7 @@ const Chat: React.FC<Props> = ({ currentChat, user, socket }) => {
     if (user._id && currentChat._id) {
       (async function () {
         await axios
-          .post(`http://localhost:5000/api/chat/get`, {
+          .post(`https://asocial-chat-app.herokuapp.com/api/chat/get`, {
             from: user._id,
             to: currentChat._id,
           })
@@ -130,7 +130,7 @@ const Chat: React.FC<Props> = ({ currentChat, user, socket }) => {
       setMessages(msgs);
 
       await axios
-        .post("http://localhost:5000/api/chat/add", {
+        .post("https://asocial-chat-app.herokuapp.com/api/chat/add", {
           from: user._id,
           to: currentChat._id,
           message,

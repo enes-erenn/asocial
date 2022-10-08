@@ -8,7 +8,7 @@ const useGetContacts = (id: string) => {
     if (id) {
       (async function () {
         await axios
-          .get(`http://localhost:5000/api/contacts/${id}`)
+          .get(`https://asocial-chat-app.herokuapp.com/api/contacts/${id}`)
           .then((res) => setContacts(res.data.users));
       })();
     }

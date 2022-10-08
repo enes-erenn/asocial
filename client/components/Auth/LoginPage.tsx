@@ -149,7 +149,7 @@ const LoginPage: React.FC = () => {
       const { usernameOrEmail, password } = user;
       try {
         const { data } = await axios.post(
-          "http://localhost:5000/api/auth/login",
+          "https://asocial-chat-app.herokuapp.com/api/auth/login",
           {
             usernameOrEmail,
             password,

@@ -85,7 +85,7 @@ const AvatarPage: React.FC = () => {
 
       // Make request to set avatar
       const { data } = await axios.post(
-        `http://localhost:5000/api/avatar/${user.id}`,
+        `https://asocial-chat-app.herokuapp.com/api/avatar/${user.id}`,
         {
           image: selectedAvatar,
         }

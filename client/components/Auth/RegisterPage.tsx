@@ -179,7 +179,7 @@ const RegisterPage: React.FC = () => {
       const { username, email, password } = user;
       try {
         const { data } = await axios.post(
-          "http://localhost:5000/api/auth/register",
+          "https://asocial-chat-app.herokuapp.com/api/auth/register",
           {
             username,
             email,

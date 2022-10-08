@@ -191,7 +191,7 @@ const RegisterPage: React.FC = () => {
           setAlert("Something went wrong. Please try again.", "fail");
         } else {
           localStorage.setItem("user", JSON.stringify(data.user));
-          router.push("/app");
+          router.push("/avatar");
         }
       } catch (err) {
         console.log(err);

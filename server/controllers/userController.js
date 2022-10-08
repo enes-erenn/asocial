@@ -130,3 +130,23 @@ module.exports.avatar = async (req, res, next) => {
     });
   }
 };
+
+module.exports.contacts = async (req, res, next) => {
+  try {
+    const users = await User.find({
+      _id: { $ne: req.params.id },
+    }).select(["email", "username", "avatarImageURL", "_id"]);
+
+    return res.json({
+      status: "success",
+      users,
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({
+      message: "Something went wrong...",
+      error: err.message,
+      status: "fail",
+    });
+  }
+};

@@ -64,9 +64,13 @@ const AppPage: React.FC = () => {
         const user: CurrentUser = await JSON.parse(
           localStorage.getItem("user") || ""
         );
-        setUser(user);
+        if (!user.avatarImageURL) {
+          router.push("/avatar");
+        } else {
+          setUser(user);
+          setIsUserAuthenticated(true);
+        }
       })();
-      setIsUserAuthenticated(true);
     }
   }, []);
 

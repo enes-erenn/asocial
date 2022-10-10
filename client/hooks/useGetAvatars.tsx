@@ -32,7 +32,7 @@ const useGetAvatars = () => {
     if (avatars.length === 4) {
       setIsReady(true);
     }
-  }, [avatars]);
+  }, [avatars.length]);
 
   return { avatars, isReady };
 };

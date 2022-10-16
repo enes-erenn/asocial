@@ -32,7 +32,7 @@ npm install
 
 ```bash
 npm run dev for the client
-npm start for the backend
+npm start for the server
 ```
 
 ## Dependencies
@@ -45,7 +45,7 @@ npm start for the backend
 - Uuid
 - Socket.io-client
 - Typescript
-- 
+
 ### Backend
 - Express
 - Bcrypt
@@ -57,6 +57,6 @@ npm start for the backend
 ## Features
 
 - Database Authentication (Register / Login with email)
-- Searchs for contacts
-- Sending Messages
+- Search for a contact
+- Send Message by realtime
 
